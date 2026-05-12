@@ -507,8 +507,8 @@ async function loadProdsPage() {
   await loadProds();
   document.getElementById('pcnt').textContent = PRODS.length;
   document.getElementById('ptb').innerHTML = PRODS.length ?
-    PRODS.map(function(p,i){ return '<tr><td class="tc">'+(i+1)+'</td><td><strong>'+p.name+'</strong></td><td><span class="cp cy">'+p.unit+'</span></td><td class="tc">'+(p.category||'—')+'</td><td><button class="btn bg bsm" onclick="openEditProd(this)" data-p=''+JSON.stringify(p).replace(/'/g,'&#39;')+''>Edit</button> <button class="btn bd bsm" onclick="delProd(''+p.id+'')">&#215;</button></td></tr>'; }).join('') :
-    '<tr><td colspan="5" class="ld">No products yet</td></tr>';
+   PRODS.map(function(p,i){ return '<tr><td class="tc">'+(i+1)+'</td><td><strong>'+p.name+'</strong></td><td><span class="c">'+(p.unit||'')+'</span></td></tr>'; }).join('') :
+'<tr><td colspan="5" class="ld">No products yet</td></tr>';
 }
 function openAddProd() { document.getElementById('pmtitle').textContent='Add Product'; document.getElementById('epid').value=''; document.getElementById('npname').value=''; document.getElementById('npunit').value='kg'; document.getElementById('npcat').value=''; openM('mprod'); }
 function openEditProd(btn) { var p=JSON.parse(btn.getAttribute('data-p')); document.getElementById('pmtitle').textContent='Edit Product'; document.getElementById('epid').value=p.id; document.getElementById('npname').value=p.name; document.getElementById('npunit').value=p.unit; document.getElementById('npcat').value=p.category||''; openM('mprod'); }
