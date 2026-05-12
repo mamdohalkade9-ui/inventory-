@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory System</title>
+<style>
+:root{--bg:#0b0f14;--s:#131820;--s2:#1a2130;--bd:#232d3d;--ac:#e8a44a;--ac2:#4a8fe8;--ac3:#4ae89a;--dg:#e84a4a;--tx:#dde4ef;--mt:#6b7a93}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+.lw{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#1a2130,#0b0f14)}
+.lb{background:var(--s);border:1px solid var(--bd);border-radius:20px;padding:48px 40px;width:420px;text-align:center}
+.ll{font-size:52px;margin-bottom:12px}
+.lt{font-size:26px;font-weight:800;color:var(--ac);margin-bottom:4px}
+.ls{color:var(--mt);font-size:13px;margin-bottom:32px}
+.fg{text-align:left;margin-bottom:14px}
+.fg label{font-size:11px;color:var(--mt);display:block;margin-bottom:5px;text-transform:uppercase}
+.fg input{width:100%;padding:11px 14px;background:var(--s2);border:1px solid var(--bd);border-radius:9px;color:var(--tx);font-size:14px;outline:none}
+.fg input:focus{border-color:var(--ac)}
+.bl{width:100%;padding:13px;background:var(--ac);color:#0b0f14;border:none;border-radius:9px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}
+.le{color:var(--dg);font-size:12px;margin-top:10px;display:none}
+.app{display:none}
+.sb{position:fixed;left:0;top:0;width:220px;height:100vh;background:var(--s);border-right:1px solid var(--bd);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sbl{padding:20px 16px 12px;border-bottom:1px solid var(--bd)}
+.sbn{font-size:14px;font-weight:800;color:var(--ac)}
+.sbu{font-size:11px;color:var(--mt);margin-top:3px}
+.sbg{background:rgba(232,164,74,.15);color:var(--ac);border:1px solid rgba(232,164,74,.3);border-radius:5px;padding:3px 9px;font-size:10px;margin-top:6px;display:inline-block}
+.ns{padding:10px 16px 4px;font-size:9px;color:var(--mt);text-transform:uppercase;letter-spacing:1.5px}
+.ni{display:flex;align-items:center;gap:8px;padding:10px 16px;cursor:pointer;color:var(--mt);font-size:13px;border-left:3px solid transparent;transition:all .15s}
+.ni:hover{color:var(--tx);background:var(--s2)}
+.ni.active{color:var(--ac);border-left-color:var(--ac);background:rgba(232,164,74,.07)}
+.nlo{margin-top:auto;padding:14px 16px;border-top:1px solid var(--bd)}
+.nlo button{width:100%;padding:9px;background:rgba(232,74,74,.1);color:var(--dg);border:1px solid rgba(232,74,74,.3);border-radius:7px;cursor:pointer;font-size:13px;font-weight:600}
+.mn{margin-left:220px;min-height:100vh}
+.tb{background:var(--s);border-bottom:1px solid var(--bd);padding:12px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90}
+.tt{font-size:16px;font-weight:700}
+.bge{background:rgba(232,164,74,.15);color:var(--ac);border:1px solid rgba(232,164,74,.3);border-radius:20px;padding:4px 12px;font-size:11px}
+.pg{display:none;padding:22px}
+.pg.active{display:block}
+.kg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kc{background:var(--s);border:1px solid var(--bd);border-radius:12px;padding:16px;position:relative;overflow:hidden}
+.kc::before{content:"";position:absolute;top:0;right:0;left:0;height:3px;background:var(--ac)}
+.kc.b::before{background:var(--ac2)}.kc.g::before{background:var(--ac3)}.kc.r::before{background:var(--dg)}
+.kl{font-size:10px;color:var(--mt);margin-bottom:6px;text-transform:uppercase}
+.kv{font-size:22px;font-weight:800;line-height:1}
+.sc{background:var(--s);border:1px solid var(--bd);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.sh{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.st{font-size:14px;font-weight:700}
+.sb2{padding:16px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:8px 11px;color:var(--mt);font-size:10px;border-bottom:1px solid var(--bd);font-weight:600;text-transform:uppercase}
+td{padding:9px 11px;border-bottom:1px solid rgba(35,45,61,.4)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--s2)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.bp{background:var(--ac);color:#0b0f14}.bg{background:var(--s2);color:var(--tx);border:1px solid var(--bd)}.bd{background:rgba(232,74,74,.1);color:var(--dg);border:1px solid rgba(232,74,74,.2)}.bb{background:rgba(74,143,232,.1);color:var(--ac2);border:1px solid rgba(74,143,232,.2)}
+.bsm{padding:4px 9px;font-size:11px}
+.fr{display:grid;gap:11px;margin-bottom:12px}
+.f2{grid-template-columns:1fr 1fr}.f3{grid-template-columns:1fr 1fr 1fr}
+.fg2{display:flex;flex-direction:column;gap:4px}
+.fg2 label{font-size:10px;color:var(--mt);text-transform:uppercase}
+.fg2 input,.fg2 select{padding:8px 11px;background:var(--s2);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-size:13px;outline:none;font-family:inherit;width:100%}
+.fg2 input:focus,.fg2 select:focus{border-color:var(--ac)}
+.cp{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.cg{background:rgba(74,232,154,.1);color:var(--ac3);border:1px solid rgba(74,232,154,.2)}
+.cr{background:rgba(232,74,74,.1);color:var(--dg);border:1px solid rgba(232,74,74,.2)}
+.cy{background:rgba(232,164,74,.1);color:var(--ac);border:1px solid rgba(232,164,74,.2)}
+.cb{background:rgba(74,143,232,.1);color:var(--ac2);border:1px solid rgba(74,143,232,.2)}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center}
+.mo.show{display:flex}
+.mb{background:var(--s);border:1px solid var(--bd);border-radius:16px;padding:26px;width:500px;max-height:88vh;overflow-y:auto}
+.mt2{font-size:15px;font-weight:700;margin-bottom:18px}
+.al{padding:10px 13px;border-radius:8px;font-size:12px;margin-bottom:12px}
+.aw{background:rgba(232,164,74,.1);border:1px solid rgba(232,164,74,.25);color:var(--ac)}
+.ao{background:rgba(74,232,154,.1);border:1px solid rgba(74,232,154,.25);color:var(--ac3)}
+.ae{background:rgba(232,74,74,.1);border:1px solid rgba(232,74,74,.25);color:var(--dg)}
+.ai{background:rgba(74,143,232,.1);border:1px solid rgba(74,143,232,.25);color:var(--ac2)}
+.fx{display:flex;align-items:center;gap:8px}
+.fxb{display:flex;align-items:center;justify-content:space-between}
+.tc{color:var(--mt)}.ta{color:var(--ac)}.tg{color:var(--ac3)}.tr{color:var(--dg)}
+.ld{text-align:center;padding:32px;color:var(--mt)}
+.sp{display:inline-block;width:22px;height:22px;border:2px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:sp .7s linear infinite;margin-bottom:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+.vp{color:var(--ac3);font-family:monospace;font-size:11px}
+.vn{color:var(--dg);font-family:monospace;font-size:11px}
+.ip{padding:5px 8px;font-size:11px;background:var(--s2);border:1px solid var(--bd);border-radius:6px;color:var(--tx)}
+.lov{position:fixed;inset:0;background:rgba(11,15,20,.96);z-index:300;align-items:center;justify-content:center;flex-direction:column;display:none}
+</style>
+</head>
+<body>
+
+<div class="lov" id="lov">
+  <div style="font-size:60px;margin-bottom:14px">&#128274;</div>
+  <div style="font-size:20px;font-weight:800;color:var(--dg);margin-bottom:8px">Inventory Closed</div>
+  <div class="tc" id="lmsg">Opens at scheduled time</div>
+</div>
+
+<div class="lw" id="lpage">
+  <div class="lb">
+    <div class="ll">&#128230;</div>
+    <div class="lt">Inventory System</div>
+    <div class="ls">Branch Operations &amp; Stock Management</div>
+    <div class="fg"><label>Username</label><input type="text" id="lu" placeholder="Enter username" autocomplete="off"></div>
+    <div class="fg"><label>Password</label><input type="password" id="lp" placeholder="Enter password"></div>
+    <button class="bl" onclick="doLogin()">Sign In &#8594;</button>
+    <div class="le" id="le">&#10060; Invalid username or password</div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="sb" id="sidebar">
+    <div class="sbl">
+      <div class="sbn">&#128230; Inventory System</div>
+      <div class="sbu" id="sbname">—</div>
+      <div class="sbg" id="sbrole">—</div>
+    </div>
+    <div id="anav">
+      <div class="ns">Overview</div>
+      <div class="ni" onclick="P('dash')">&#128202; Dashboard</div>
+      <div class="ns">Management</div>
+      <div class="ni" onclick="P('users')">&#128101; Users &amp; Branches</div>
+      <div class="ni" onclick="P('prods')">&#128230; Products</div>
+      <div class="ni" onclick="P('sched')">&#9200; Schedule</div>
+      <div class="ns">Reports</div>
+      <div class="ni" onclick="P('arec')">&#128229; All Receipts</div>
+      <div class="ni" onclick="P('atr')">&#128260; All Transfers</div>
+      <div class="ni" onclick="P('ainv')">&#128203; Inv. Reports</div>
+    </div>
+    <div id="bnav" style="display:none">
+      <div class="ns">Daily Operations</div>
+      <div class="ni" onclick="P('rec')">&#128229; Daily Receipts</div>
+      <div class="ni" onclick="P('tr')">&#128260; Transfers</div>
+      <div class="ns">Inventory</div>
+      <div class="ni" onclick="P('invd')">&#128203; Daily Inventory</div>
+      <div class="ni" onclick="P('invw')">&#128197; Weekly Inventory</div>
+      <div class="ni" onclick="P('invm')">&#128198; Monthly Inventory</div>
+    </div>
+    <div class="nlo"><button onclick="doLogout()">Sign Out</button></div>
+  </div>
+
+  <div class="mn">
+    <div class="tb">
+      <div class="tt" id="pgtitle">Dashboard</div>
+      <div class="fx">
+        <span class="bge" id="tbbr">—</span>
+        <span class="bge" id="tbdt">—</span>
+      </div>
+    </div>
+
+    <div class="pg" id="pdash">
+      <div class="kg">
+        <div class="kc"><div class="kl">Branches</div><div class="kv ta" id="kbr">—</div></div>
+        <div class="kc b"><div class="kl">Receipts Today</div><div class="kv" id="krec">—</div></div>
+        <div class="kc g"><div class="kl">Transfers Today</div><div class="kv" id="ktr">—</div></div>
+        <div class="kc r"><div class="kl">Pending</div><div class="kv" id="kpend">—</div></div>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">&#128229; Today's Receipts</div><span class="tc" id="ddate" style="font-size:11px">—</span></div>
+        <div style="padding:0"><table><thead><tr><th>Branch</th><th>Product</th><th>Qty</th><th>Unit</th><th>Note</th><th>Time</th></tr></thead>
+        <tbody id="drecb"><tr><td colspan="6" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">&#128260; Today's Transfers</div></div>
+        <div style="padding:0"><table><thead><tr><th>From</th><th>To</th><th>Product</th><th>Qty</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody id="dtrb"><tr><td colspan="6" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="pg" id="pusers">
+      <div class="fxb" style="margin-bottom:16px">
+        <div class="al ai" style="flex:1;margin:0;margin-right:12px">Create accounts for each branch manager.</div>
+        <button class="btn bp" onclick="openM('madd')">+ Add User</button>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">Branch Users</div><span class="bge" id="ucnt">0</span></div>
+        <div style="padding:0"><table><thead><tr><th>#</th><th>Branch</th><th>Username</th><th>Password</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="utb"><tr><td colspan="6" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="pg" id="pprods">
+      <div class="fxb" style="margin-bottom:16px">
+        <div class="al ai" style="flex:1;margin:0;margin-right:12px">Manage product catalog for all branches.</div>
+        <button class="btn bp" onclick="openAddProd()">+ Add Product</button>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">Products</div><span class="bge" id="pcnt">0</span></div>
+        <div style="padding:0"><table><thead><tr><th>#</th><th>Product</th><th>Unit</th><th>Category</th><th>Actions</th></tr></thead>
+        <tbody id="ptb"><tr><td colspan="5" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="pg" id="psched">
+      <div class="al aw" style="margin-bottom:16px">Set inventory hours. Branches cannot submit outside these times.</div>
+      <div class="sc">
+        <div class="sh"><div class="st">Inventory Schedule</div></div>
+        <div class="sb2">
+          <div class="fr f3">
+            <div class="fg2"><label>Open Time</label><input type="time" id="sopen" value="08:00"></div>
+            <div class="fg2"><label>Close Time</label><input type="time" id="sclose" value="23:00"></div>
+            <div class="fg2"><label>Mode</label><select id="sact"><option value="true">Restricted</option><option value="false">Always Open</option></select></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:10px;color:var(--mt);display:block;margin-bottom:8px;text-transform:uppercase">Active Days</label>
+            <div class="fx" style="flex-wrap:wrap;gap:10px" id="dcbs">
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" value="0" checked> Sun</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" value="1" checked> Mon</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" value="2" checked> Tue</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" value="3" checked> Wed</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" value="4" checked> Thu</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" value="5" checked> Fri</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:12px"><input type="checkbox" value="6" checked> Sat</label>
+            </div>
+          </div>
+          <button class="btn bp" onclick="saveSched()">Save Schedule</button>
+          <div style="margin-top:12px" id="schdisp"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pg" id="parec">
+      <div class="fxb" style="margin-bottom:14px">
+        <div class="fx">
+          <div class="fg2" style="margin:0"><select id="arbr" onchange="loadARec()"><option value="">All Branches</option></select></div>
+          <div class="fg2" style="margin:0"><input type="date" id="ardt" onchange="loadARec()"></div>
+        </div>
+        <button class="btn bg bsm" onclick="expTbl('arecb','receipts')">&#8595; Export</button>
+      </div>
+      <div class="sc"><div style="padding:0"><table><thead><tr><th>Date</th><th>Branch</th><th>Product</th><th>Qty</th><th>Unit</th><th>Note</th></tr></thead>
+      <tbody id="arecb"><tr><td colspan="6" class="ld"><div class="sp"></div></td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="pg" id="patr">
+      <div class="fxb" style="margin-bottom:14px">
+        <div class="fx">
+          <div class="fg2" style="margin:0"><select id="atbr" onchange="loadATr()"><option value="">All Branches</option></select></div>
+          <div class="fg2" style="margin:0"><input type="date" id="atdt" onchange="loadATr()"></div>
+        </div>
+        <button class="btn bg bsm" onclick="expTbl('atrb','transfers')">&#8595; Export</button>
+      </div>
+      <div class="sc"><div style="padding:0"><table><thead><tr><th>Date</th><th>From</th><th>To</th><th>Product</th><th>Qty</th><th>Status</th><th>Note</th></tr></thead>
+      <tbody id="atrb"><tr><td colspan="7" class="ld"><div class="sp"></div></td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="pg" id="painv">
+      <div class="fxb" style="margin-bottom:14px">
+        <div class="fx">
+          <div class="fg2" style="margin:0"><select id="aibr" onchange="loadAInv()"><option value="">All Branches</option></select></div>
+          <div class="fg2" style="margin:0"><select id="aitp" onchange="loadAInv()"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></div>
+        </div>
+      </div>
+      <div class="sc"><div style="padding:0"><table><thead><tr><th>Branch</th><th>Date</th><th>Type</th><th>Items</th><th>Submitted</th></tr></thead>
+      <tbody id="ainvb"><tr><td colspan="5" class="ld"><div class="sp"></div></td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="pg" id="prec">
+      <div class="fxb" style="margin-bottom:16px">
+        <div class="fg2" style="margin:0"><label>Date</label><input type="date" id="recdt" onchange="loadRec()"></div>
+        <button class="btn bp" onclick="openM('mrec')">+ Add Receipt</button>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">&#128229; Receipts — <span id="reclbl">—</span></div></div>
+        <div style="padding:0"><table><thead><tr><th>Product</th><th>Qty</th><th>Unit</th><th>Note</th><th>Time</th><th></th></tr></thead>
+        <tbody id="rectb"><tr><td colspan="6" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="pg" id="ptr">
+      <div class="fxb" style="margin-bottom:16px">
+        <div class="fg2" style="margin:0"><label>Date</label><input type="date" id="trdt" onchange="loadSentTr()"></div>
+        <div class="fx">
+          <button class="btn bp" onclick="openSendTr()">&#8593; Send Transfer</button>
+          <button class="btn bb" onclick="P('inc')">&#8595; Incoming</button>
+        </div>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">&#8593; Sent Transfers</div></div>
+        <div style="padding:0"><table><thead><tr><th>To Branch</th><th>Product</th><th>Qty</th><th>Unit</th><th>Status</th><th>Note</th><th>Time</th></tr></thead>
+        <tbody id="senttb"><tr><td colspan="7" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="pg" id="pinc">
+      <div class="fxb" style="margin-bottom:16px">
+        <div class="st">&#8595; Incoming — <span id="inclbl">—</span></div>
+        <button class="btn bg" onclick="P('tr')">&#8592; Back</button>
+      </div>
+      <div class="sc"><div style="padding:0"><table><thead><tr><th>From</th><th>Product</th><th>Qty</th><th>Unit</th><th>Status</th><th>Note</th><th>Action</th></tr></thead>
+      <tbody id="inctb"><tr><td colspan="7" class="ld"><div class="sp"></div></td></tr></tbody></table></div></div>
+    </div>
+
+    <div class="pg" id="pinvd">
+      <div class="al aw" id="ilka" style="display:none;margin-bottom:12px">&#128274; Inventory locked outside schedule</div>
+      <div class="fxb" style="margin-bottom:16px">
+        <div class="fg2" style="margin:0"><label>Date</label><input type="date" id="ddt" onchange="loadInv('daily')"></div>
+        <button class="btn bp" onclick="saveInv('daily')">Save Daily Inventory</button>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">Daily Inventory Count</div></div>
+        <div style="padding:0;overflow:auto"><table><thead><tr><th>Product</th><th>Unit</th><th>Opening</th><th>Received</th><th>Trans.Out</th><th>Trans.In</th><th>Closing</th><th>Variance</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="invdb"><tr><td colspan="10" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+        <div style="padding:9px 14px;border-top:1px solid var(--bd)"><button class="btn bg bsm" onclick="addIR('daily')">+ Add Item</button></div>
+      </div>
+    </div>
+
+    <div class="pg" id="pinvw">
+      <div class="fxb" style="margin-bottom:16px">
+        <div class="fg2" style="margin:0"><label>Week</label><input type="week" id="wdt" onchange="loadInv('weekly')"></div>
+        <button class="btn bp" onclick="saveInv('weekly')">Save Weekly Inventory</button>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">Weekly Inventory Count</div></div>
+        <div style="padding:0;overflow:auto"><table><thead><tr><th>Product</th><th>Unit</th><th>Opening</th><th>Received</th><th>Consumption</th><th>Closing</th><th>Variance</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="invwb"><tr><td colspan="9" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+        <div style="padding:9px 14px;border-top:1px solid var(--bd)"><button class="btn bg bsm" onclick="addIR('weekly')">+ Add Item</button></div>
+      </div>
+    </div>
+
+    <div class="pg" id="pinvm">
+      <div class="fxb" style="margin-bottom:16px">
+        <div class="fg2" style="margin:0"><label>Month</label><input type="month" id="mdt" onchange="loadInv('monthly')"></div>
+        <button class="btn bp" onclick="saveInv('monthly')">Save Monthly Inventory</button>
+      </div>
+      <div class="sc">
+        <div class="sh"><div class="st">Monthly Inventory Count</div></div>
+        <div style="padding:0;overflow:auto"><table><thead><tr><th>Product</th><th>Unit</th><th>Opening</th><th>Received</th><th>Consumption</th><th>Closing</th><th>Variance</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="invmb"><tr><td colspan="9" class="ld"><div class="sp"></div></td></tr></tbody></table></div>
+        <div style="padding:9px 14px;border-top:1px solid var(--bd)"><button class="btn bg bsm" onclick="addIR('monthly')">+ Add Item</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="mo" id="madd">
+  <div class="mb">
+    <div class="mt2">Add Branch User</div>
+    <div class="fr f2">
+      <div class="fg2"><label>Branch Name</label><input type="text" id="nbname" placeholder="e.g. Riyadh Branch"></div>
+      <div class="fg2"><label>Username</label><input type="text" id="nbuser" placeholder="e.g. riyadh01"></div>
+    </div>
+    <div class="fr"><div class="fg2"><label>Password</label><input type="text" id="nbpass" placeholder="Enter password"></div></div>
+    <div id="nberr" class="al ae" style="display:none"></div>
+    <div class="fx" style="justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn bg" onclick="closeM('madd')">Cancel</button>
+      <button class="btn bp" onclick="saveUser()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mprod">
+  <div class="mb">
+    <div class="mt2" id="pmtitle">Add Product</div>
+    <input type="hidden" id="epid">
+    <div class="fr f2">
+      <div class="fg2"><label>Product Name</label><input type="text" id="npname" placeholder="e.g. Chicken Breast"></div>
+      <div class="fg2"><label>Unit</label><select id="npunit"><option>kg</option><option>g</option><option>pcs</option><option>liter</option><option>bottle</option><option>cup</option><option>box</option><option>can</option><option>portion</option><option>unit</option></select></div>
+    </div>
+    <div class="fr"><div class="fg2"><label>Category</label><input type="text" id="npcat" placeholder="e.g. Meat, Beverages"></div></div>
+    <div class="fx" style="justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn bg" onclick="closeM('mprod')">Cancel</button>
+      <button class="btn bp" onclick="saveProd()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mrec">
+  <div class="mb">
+    <div class="mt2">Add Receipt</div>
+    <div class="fr f2">
+      <div class="fg2"><label>Product</label><select id="nrprod" onchange="setU('nrprod','nrunit')"><option value="">Select...</option></select></div>
+      <div class="fg2"><label>Qty Received</label><input type="number" id="nrqty" min="0" step="0.01"></div>
+    </div>
+    <div class="fr f2">
+      <div class="fg2"><label>Unit</label><input type="text" id="nrunit" readonly style="opacity:.7"></div>
+      <div class="fg2"><label>Supplier / Note</label><input type="text" id="nrnote" placeholder="Optional"></div>
+    </div>
+    <div class="fx" style="justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn bg" onclick="closeM('mrec')">Cancel</button>
+      <button class="btn bp" onclick="saveRec()">Save Receipt</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mtr">
+  <div class="mb">
+    <div class="mt2">Send Transfer</div>
+    <div class="fr f2">
+      <div class="fg2"><label>To Branch</label><select id="ntbr"><option value="">Select...</option></select></div>
+      <div class="fg2"><label>Product</label><select id="ntprod" onchange="setU('ntprod','ntunit')"><option value="">Select...</option></select></div>
+    </div>
+    <div class="fr f2">
+      <div class="fg2"><label>Quantity</label><input type="number" id="ntqty" min="0" step="0.01"></div>
+      <div class="fg2"><label>Unit</label><input type="text" id="ntunit" readonly style="opacity:.7"></div>
+    </div>
+    <div class="fr"><div class="fg2"><label>Note</label><input type="text" id="ntnote"></div></div>
+    <div class="fx" style="justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn bg" onclick="closeM('mtr')">Cancel</button>
+      <button class="btn bp" onclick="sendTr()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB = 'https://eddsugkfmczjwpiyqunc.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkZHN1Z2tmbWN6andwaXlxdW5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1ODU0MjgsImV4cCI6MjA5NDE2MTQyOH0.ohinEJuj9LVVrFu-mNGI9ILTJl3H4yy-v_l-iLUdQQA';
+let CU = null, PRODS = [], BRANCHES = [];
+
+async function api(path, method, body) {
+  const sep = path.includes('?') ? '&' : '?';
+  const url = SB + '/rest/v1/' + path + sep + 'apikey=' + KEY;
+  const h = { 'Authorization': 'Bearer ' + KEY, 'Content-Type': 'application/json', 'Accept': 'application/json' };
+  if (method === 'POST') h['Prefer'] = 'return=representation';
+  const r = await fetch(url, { method: method || 'GET', headers: h, body: body ? JSON.stringify(body) : null });
+  const t = await r.text();
+  if (!r.ok) throw new Error(t);
+  return t ? JSON.parse(t) : [];
+}
+
+async function doLogin() {
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value.trim();
+  if (!u || !p) return;
+  const el = document.getElementById('le');
+  el.style.display = 'none';
+  try {
+    const rows = await api('branches?username=eq.' + encodeURIComponent(u) + '&select=*');
+    if (!rows.length || rows[0].password_hash !== p) { el.style.display = 'block'; return; }
+    CU = { id: rows[0].id, name: rows[0].name, username: u, isAdmin: u === 'admin' };
+    sessionStorage.setItem('cu', JSON.stringify(CU));
+    startApp();
+  } catch(e) { el.textContent = 'Error: ' + e.message; el.style.display = 'block'; }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('cu'); CU = null;
+  document.getElementById('lpage').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('lu').value = '';
+  document.getElementById('lp').value = '';
+}
+
+async function startApp() {
+  document.getElementById('lpage').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('sbname').textContent = CU.name;
+  document.getElementById('sbrole').textContent = CU.isAdmin ? 'Admin' : 'Branch Manager';
+  document.getElementById('tbbr').textContent = CU.name;
+  document.getElementById('tbdt').textContent = new Date().toLocaleDateString('en-GB');
+  await loadProds(); await loadBranches();
+  if (CU.isAdmin) {
+    document.getElementById('anav').style.display = 'block';
+    document.getElementById('bnav').style.display = 'none';
+    P('dash'); loadSched();
+  } else {
+    document.getElementById('anav').style.display = 'none';
+    document.getElementById('bnav').style.display = 'block';
+    document.getElementById('recdt').value = td();
+    document.getElementById('trdt').value = td();
+    document.getElementById('ddt').value = td();
+    document.getElementById('wdt').value = wstr();
+    document.getElementById('mdt').value = td().slice(0,7);
+    document.getElementById('reclbl').textContent = CU.name;
+    document.getElementById('inclbl').textContent = CU.name;
+    P('rec'); chkLock(); loadRec();
+  }
+}
+
+window.onload = function() { const s = sessionStorage.getItem('cu'); if (s) { CU = JSON.parse(s); startApp(); } };
+
+document.getElementById('lp').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+
+const TL = { dash:'Dashboard', users:'Users & Branches', prods:'Products', sched:'Schedule', arec:'All Receipts', atr:'All Transfers', ainv:'Inv. Reports', rec:'Daily Receipts', tr:'Transfers', inc:'Incoming Transfers', invd:'Daily Inventory', invw:'Weekly Inventory', invm:'Monthly Inventory' };
+
+function P(id) {
+  document.querySelectorAll('.pg').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.ni').forEach(function(n) { n.classList.remove('active'); });
+  var el = document.getElementById('p' + id); if (el) el.classList.add('active');
+  document.getElementById('pgtitle').textContent = TL[id] || id;
+  var fns = { dash:loadDash, users:loadUsers, prods:loadProdsPage, arec:loadARec, atr:loadATr, ainv:loadAInv, rec:loadRec, tr:loadSentTr, inc:loadIncTr };
+  if (fns[id]) fns[id]();
+  if (id === 'invd') { chkLock(); loadInv('daily'); }
+  if (id === 'invw') loadInv('weekly');
+  if (id === 'invm') loadInv('monthly');
+}
+
+function openM(id) { document.getElementById(id).classList.add('show'); }
+function closeM(id) { document.getElementById(id).classList.remove('show'); }
+function td() { return new Date().toISOString().slice(0,10); }
+function wstr() { var d=new Date(); var day=d.getDay()||7; d.setDate(d.getDate()+4-day); var y=d.getFullYear(); var w=Math.ceil((((d-new Date(y,0,1))/86400000)+1)/7); return y+'-W'+String(w).padStart(2,'0'); }
+function fmt(n) { return (+n||0).toFixed(2); }
+function ttm(ts) { return new Date(ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+function sch(s) { return s==='accepted'?'<span class="cp cg">Accepted</span>':s==='pending'?'<span class="cp cy">Pending</span>':'<span class="cp cr">'+s+'</span>'; }
+function setU(sid, uid) { var v=document.getElementById(sid).value.split('|'); document.getElementById(uid).value=v[1]||''; }
+function popts() { return '<option value="">Select...</option>'+PRODS.map(function(p){return '<option value="'+p.id+'|'+p.unit+'">'+p.name+'</option>';}).join(''); }
+
+async function loadProds() { try { PRODS = await api('products?select=*&order=name.asc'); } catch(e) {} }
+
+async function loadBranches() {
+  try { BRANCHES = await api('branches?username=neq.admin&select=*&order=name.asc'); } catch(e) {}
+  var opts = '<option value="">All Branches</option>'+BRANCHES.map(function(b){return '<option value="'+b.id+'">'+b.name+'</option>';}).join('');
+  ['arbr','atbr','aibr'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=opts; });
+}
+
+async function loadProdsPage() {
+  await loadProds();
+  document.getElementById('pcnt').textContent = PRODS.length;
+  document.getElementById('ptb').innerHTML = PRODS.length ?
+    PRODS.map(function(p,i){ return '<tr><td class="tc">'+(i+1)+'</td><td><strong>'+p.name+'</strong></td><td><span class="cp cy">'+p.unit+'</span></td><td class="tc">'+(p.category||'—')+'</td><td><button class="btn bg bsm" onclick="openEditProd(this)" data-p=''+JSON.stringify(p).replace(/'/g,'&#39;')+''>Edit</button> <button class="btn bd bsm" onclick="delProd(''+p.id+'')">&#215;</button></td></tr>'; }).join('') :
+    '<tr><td colspan="5" class="ld">No products yet</td></tr>';
+}
+function openAddProd() { document.getElementById('pmtitle').textContent='Add Product'; document.getElementById('epid').value=''; document.getElementById('npname').value=''; document.getElementById('npunit').value='kg'; document.getElementById('npcat').value=''; openM('mprod'); }
+function openEditProd(btn) { var p=JSON.parse(btn.getAttribute('data-p')); document.getElementById('pmtitle').textContent='Edit Product'; document.getElementById('epid').value=p.id; document.getElementById('npname').value=p.name; document.getElementById('npunit').value=p.unit; document.getElementById('npcat').value=p.category||''; openM('mprod'); }
+async function saveProd() {
+  var id=document.getElementById('epid').value, name=document.getElementById('npname').value.trim(), unit=document.getElementById('npunit').value, cat=document.getElementById('npcat').value.trim();
+  if(!name) return;
+  try { if(id) await api('products?id=eq.'+id,'PATCH',{name:name,unit:unit,category:cat}); else await api('products','POST',{name:name,unit:unit,category:cat}); closeM('mprod'); loadProdsPage(); } catch(e) { alert('Error: '+e.message); }
+}
+async function delProd(id) { if(!confirm('Delete?')) return; await api('products?id=eq.'+id,'DELETE'); loadProdsPage(); }
+
+async function loadUsers() {
+  await loadBranches();
+  document.getElementById('ucnt').textContent = BRANCHES.length;
+  document.getElementById('utb').innerHTML = BRANCHES.length ?
+    BRANCHES.map(function(b,i){ return '<tr><td class="tc">'+(i+1)+'</td><td><strong>'+b.name+'</strong></td><td>'+b.username+'</td><td>'+b.password_hash+'</td><td>'+(b.is_active?'<span class="cp cg">Active</span>':'<span class="cp cr">Disabled</span>')+'</td><td><button class="btn bg bsm" onclick="toggleU(''+b.id+'','+b.is_active+')">'+(b.is_active?'Disable':'Enable')+'</button> <button class="btn bd bsm" onclick="delU(''+b.id+'',''+b.name+'')">&#215;</button></td></tr>'; }).join('') :
+    '<tr><td colspan="6" class="ld">No users yet</td></tr>';
+}
+async function saveUser() {
+  var name=document.getElementById('nbname').value.trim(), user=document.getElementById('nbuser').value.trim(), pass=document.getElementById('nbpass').value.trim();
+  var err=document.getElementById('nberr'); err.style.display='none';
+  if(!name||!user||!pass){err.textContent='Fill all fields';err.style.display='block';return;}
+  try { await api('branches','POST',{name:name,username:user,password_hash:pass,is_active:true}); closeM('madd'); loadUsers(); }
+  catch(e){err.textContent='Username already exists';err.style.display='block';}
+}
+async function toggleU(id,cur){await api('branches?id=eq.'+id,'PATCH',{is_active:!cur});loadUsers();}
+async function delU(id,name){if(!confirm('Delete "'+name+'"?'))return;await api('branches?id=eq.'+id,'DELETE');loadUsers();}
+
+async function saveSched(){
+  var ot=document.getElementById('sopen').value, ct=document.getElementById('sclose').value, ia=document.getElementById('sact').value==='true';
+  var days=[].slice.call(document.querySelectorAll('#dcbs input:checked')).map(function(e){return e.value;});
+  try{var ex=await api('inventory_schedule?select=id&limit=1');if(ex.length)await api('inventory_schedule?id=eq.'+ex[0].id,'PATCH',{open_time:ot,close_time:ct,is_active:ia,days:days});else await api('inventory_schedule','POST',{open_time:ot,close_time:ct,is_active:ia,days:days});loadSched();alert('Saved!');}catch(e){alert('Error: '+e.message);}
+}
+async function loadSched(){
+  try{var r=await api('inventory_schedule?select=*&limit=1');if(!r.length)return;var s=r[0];document.getElementById('sopen').value=s.open_time||'08:00';document.getElementById('sclose').value=s.close_time||'23:00';document.getElementById('sact').value=s.is_active?'true':'false';document.querySelectorAll('#dcbs input').forEach(function(el){el.checked=(s.days||[]).indexOf(el.value)>=0;});document.getElementById('schdisp').innerHTML='<div class="al ao">Open: <strong>'+s.open_time+'</strong> — Close: <strong>'+s.close_time+'</strong></div>';}catch(e){}
+}
+async function chkLock(){
+  try{var r=await api('inventory_schedule?select=*&limit=1');if(!r.length||!r[0].is_active)return;var s=r[0];var now=new Date();var day=String(now.getDay());var t=now.toTimeString().slice(0,5);var locked=(s.days||[]).indexOf(day)>=0&&!(t>=s.open_time&&t<=s.close_time);document.getElementById('lov').style.display=locked?'flex':'none';document.getElementById('ilka').style.display=locked?'block':'none';if(locked)document.getElementById('lmsg').textContent='Opens '+s.open_time+' — Closes '+s.close_time;}catch(e){}
+}
+
+async function loadRec(){
+  var date=document.getElementById('recdt').value||td();
+  try{var rows=await api('receipts?branch_id=eq.'+CU.id+'&date=eq.'+date+'&select=*,products(name,unit)&order=created_at.desc');document.getElementById('rectb').innerHTML=rows.length?rows.map(function(r){return '<tr><td><strong>'+(r.products?r.products.name:'—')+'</strong></td><td>'+fmt(r.qty)+'</td><td class="tc">'+(r.products?r.products.unit:'—')+'</td><td class="tc">'+(r.note||'—')+'</td><td class="tc" style="font-size:10px">'+ttm(r.created_at)+'</td><td><button class="btn bd bsm" onclick="delRec(''+r.id+'')">&#215;</button></td></tr>';}).join(''):'<tr><td colspan="6" class="ld">No receipts</td></tr>';}catch(e){}
+}
+async function saveRec(){
+  var pv=document.getElementById('nrprod').value.split('|'), qty=+document.getElementById('nrqty').value, note=document.getElementById('nrnote').value.trim(), date=document.getElementById('recdt').value||td();
+  if(!pv[0]||!qty){alert('Select product and enter quantity');return;}
+  try{await api('receipts','POST',{branch_id:CU.id,product_id:pv[0],qty:qty,note:note,date:date});closeM('mrec');loadRec();}catch(e){alert('Error: '+e.message);}
+}
+async function delRec(id){if(!confirm('Delete?'))return;await api('receipts?id=eq.'+id,'DELETE');loadRec();}
+
+async function loadSentTr(){
+  var date=document.getElementById('trdt').value||td();
+  try{var rows=await api('transfers?from_branch_id=eq.'+CU.id+'&date=eq.'+date+'&select=*,products(name,unit),to_branch:branches!transfers_to_branch_id_fkey(name)&order=created_at.desc');document.getElementById('senttb').innerHTML=rows.length?rows.map(function(r){return '<tr><td>'+(r.to_branch?r.to_branch.name:'—')+'</td><td><strong>'+(r.products?r.products.name:'—')+'</strong></td><td>'+fmt(r.qty)+'</td><td class="tc">'+(r.products?r.products.unit:'—')+'</td><td>'+sch(r.status)+'</td><td class="tc">'+(r.note||'—')+'</td><td class="tc" style="font-size:10px">'+ttm(r.created_at)+'</td></tr>';}).join(''):'<tr><td colspan="7" class="ld">No transfers</td></tr>';}catch(e){console.error(e);}
+}
+async function loadIncTr(){
+  try{var rows=await api('transfers?to_branch_id=eq.'+CU.id+'&select=*,products(name,unit),from_branch:branches!transfers_from_branch_id_fkey(name)&order=created_at.desc');document.getElementById('inctb').innerHTML=rows.length?rows.map(function(r){return '<tr><td>'+(r.from_branch?r.from_branch.name:'—')+'</td><td><strong>'+(r.products?r.products.name:'—')+'</strong></td><td>'+fmt(r.qty)+'</td><td class="tc">'+(r.products?r.products.unit:'—')+'</td><td>'+sch(r.status)+'</td><td class="tc">'+(r.note||'—')+'</td><td>'+(r.status==='pending'?'<button class="btn bp bsm" onclick="accTr(''+r.id+'')">&#10003; Accept</button>':'')+'</td></tr>';}).join(''):'<tr><td colspan="7" class="ld">No incoming</td></tr>';}catch(e){console.error(e);}
+}
+function openSendTr(){
+  document.getElementById('ntprod').innerHTML=popts();
+  var toBr=BRANCHES.filter(function(b){return b.id!==CU.id;});
+  document.getElementById('ntbr').innerHTML='<option value="">Select...</option>'+toBr.map(function(b){return '<option value="'+b.id+'">'+b.name+'</option>';}).join('');
+  document.getElementById('ntqty').value=''; document.getElementById('ntnote').value='';
+  openM('mtr');
+}
+async function sendTr(){
+  var bv=document.getElementById('ntbr').value, pv=document.getElementById('ntprod').value.split('|'), qty=+document.getElementById('ntqty').value, note=document.getElementById('ntnote').value.trim(), date=document.getElementById('trdt').value||td();
+  if(!bv||!pv[0]||!qty){alert('Fill all fields');return;}
+  try{await api('transfers','POST',{from_branch_id:CU.id,to_branch_id:bv,product_id:pv[0],qty:qty,note:note,date:date,status:'pending'});closeM('mtr');loadSentTr();}catch(e){alert('Error: '+e.message);}
+}
+async function accTr(id){await api('transfers?id=eq.'+id,'PATCH',{status:'accepted'});loadIncTr();}
+
+async function loadDash(){
+  var t=td(); document.getElementById('ddate').textContent=t;
+  try{
+    var recs=await api('receipts?date=eq.'+t+'&select=*,products(name,unit),branches(name)&order=created_at.desc');
+    var trs=await api('transfers?date=eq.'+t+'&select=*,products(name,unit),from_branch:branches!transfers_from_branch_id_fkey(name),to_branch:branches!transfers_to_branch_id_fkey(name)&order=created_at.desc');
+    document.getElementById('kbr').textContent=BRANCHES.length;
+    document.getElementById('krec').textContent=recs.length;
+    document.getElementById('ktr').textContent=trs.length;
+    document.getElementById('kpend').textContent=trs.filter(function(r){return r.status==='pending';}).length;
+    document.getElementById('drecb').innerHTML=recs.length?recs.map(function(r){return '<tr><td>'+(r.branches?r.branches.name:'—')+'</td><td><strong>'+(r.products?r.products.name:'—')+'</strong></td><td>'+fmt(r.qty)+'</td><td class="tc">'+(r.products?r.products.unit:'—')+'</td><td class="tc">'+(r.note||'—')+'</td><td class="tc" style="font-size:10px">'+ttm(r.created_at)+'</td></tr>';}).join(''):'<tr><td colspan="6" class="ld">No receipts today</td></tr>';
+    document.getElementById('dtrb').innerHTML=trs.length?trs.map(function(r){return '<tr><td>'+(r.from_branch?r.from_branch.name:'—')+'</td><td>'+(r.to_branch?r.to_branch.name:'—')+'</td><td><strong>'+(r.products?r.products.name:'—')+'</strong></td><td>'+fmt(r.qty)+'</td><td>'+sch(r.status)+'</td><td class="tc" style="font-size:10px">'+ttm(r.created_at)+'</td></tr>';}).join(''):'<tr><td colspan="6" class="ld">No transfers today</td></tr>';
+  }catch(e){console.error(e);}
+}
+async function loadARec(){
+  var url='receipts?select=*,products(name,unit),branches(name)&order=date.desc,created_at.desc';
+  var br=document.getElementById('arbr').value, dt=document.getElementById('ardt').value;
+  if(br)url+='&branch_id=eq.'+br; if(dt)url+='&date=eq.'+dt;
+  try{var rows=await api(url);document.getElementById('arecb').innerHTML=rows.length?rows.map(function(r){return '<tr><td>'+r.date+'</td><td>'+(r.branches?r.branches.name:'—')+'</td><td><strong>'+(r.products?r.products.name:'—')+'</strong></td><td>'+fmt(r.qty)+'</td><td class="tc">'+(r.products?r.products.unit:'—')+'</td><td class="tc">'+(r.note||'—')+'</td></tr>';}).join(''):'<tr><td colspan="6" class="ld">No data</td></tr>';}catch(e){}
+}
+async function loadATr(){
+  var url='transfers?select=*,products(name,unit),from_branch:branches!transfers_from_branch_id_fkey(name),to_branch:branches!transfers_to_branch_id_fkey(name)&order=date.desc,created_at.desc';
+  var dt=document.getElementById('atdt').value; if(dt)url+='&date=eq.'+dt;
+  try{var rows=await api(url);document.getElementById('atrb').innerHTML=rows.length?rows.map(function(r){return '<tr><td>'+r.date+'</td><td>'+(r.from_branch?r.from_branch.name:'—')+'</td><td>'+(r.to_branch?r.to_branch.name:'—')+'</td><td><strong>'+(r.products?r.products.name:'—')+'</strong></td><td>'+fmt(r.qty)+'</td><td>'+sch(r.status)+'</td><td class="tc">'+(r.note||'—')+'</td></tr>';}).join(''):'<tr><td colspan="7" class="ld">No data</td></tr>';}catch(e){}
+}
+async function loadAInv(){
+  var url='inventory?select=*,branches(name)&order=date.desc';
+  var br=document.getElementById('aibr').value, tp=document.getElementById('aitp').value;
+  if(br)url+='&branch_id=eq.'+br; if(tp)url+='&type=eq.'+tp;
+  try{var rows=await api(url);document.getElementById('ainvb').innerHTML=rows.length?rows.map(function(r){return '<tr><td><strong>'+(r.branches?r.branches.name:'—')+'</strong></td><td>'+r.date+'</td><td><span class="cp cb">'+r.type+'</span></td><td>'+(r.data&&r.data.items?r.data.items.length:0)+'</td><td class="tc" style="font-size:10px">'+new Date(r.created_at).toLocaleString('en-GB')+'</td></tr>';}).join(''):'<tr><td colspan="5" class="ld">No data</td></tr>';}catch(e){}
+}
+
+function irHTML(item, type) {
+  var ps = PRODS.map(function(p){ return '<option value="'+p.name+'|'+p.unit+'"'+(p.name===item.name?' selected':'')+'>'+p.name+'</option>'; }).join('');
+  var sel = '<select class="ip" style="width:140px" onchange="this.closest('tr').querySelector('.ulbl').textContent=this.value.split('|')[1]||''"><option value="">Select...</option>'+ps+'</select>';
+  var v = (item.closing||0) - ((item.opening||0)+(item.received||0)+(item.tin||0)-(item.tout||0)-(item.consumption||0));
+  var vc = v>=0?'vp':'vn';
+  var vs = (v>=0?'+':'')+Math.round(v*100)/100;
+  if (type === 'daily') {
+    return '<tr>'+
+      '<td>'+sel+'</td>'+
+      '<td class="ulbl tc" style="font-size:11px">'+(item.unit||'')+'</td>'+
+      '<td><input class="ip" type="number" value="'+(item.opening||0)+'" style="width:65px"></td>'+
+      '<td><input class="ip" type="number" value="'+(item.received||0)+'" style="width:65px"></td>'+
+      '<td><input class="ip" type="number" value="'+(item.tout||0)+'" style="width:65px"></td>'+
+      '<td><input class="ip" type="number" value="'+(item.tin||0)+'" style="width:65px"></td>'+
+      '<td><input class="ip" type="number" value="'+(item.closing||0)+'" style="width:65px"></td>'+
+      '<td class="'+vc+'">'+vs+'</td>'+
+      '<td><input class="ip" type="text" value="'+(item.notes||'')+'" style="width:90px"></td>'+
+      '<td><button class="btn bd bsm" onclick="this.closest('tr').remove()">&#215;</button></td>'+
+      '</tr>';
+  } else {
+    return '<tr>'+
+      '<td>'+sel+'</td>'+
+      '<td class="ulbl tc" style="font-size:11px">'+(item.unit||'')+'</td>'+
+      '<td><input class="ip" type="number" value="'+(item.opening||0)+'" style="width:65px"></td>'+
+      '<td><input class="ip" type="number" value="'+(item.received||0)+'" style="width:65px"></td>'+
+      '<td><input class="ip" type="number" value="'+(item.consumption||0)+'" style="width:65px"></td>'+
+      '<td><input class="ip" type="number" value="'+(item.closing||0)+'" style="width:65px"></td>'+
+      '<td class="'+vc+'">'+vs+'</td>'+
+      '<td><input class="ip" type="text" value="'+(item.notes||'')+'" style="width:90px"></td>'+
+      '<td><button class="btn bd bsm" onclick="this.closest('tr').remove()">&#215;</button></td>'+
+      '</tr>';
+  }
+}
+
+function addIR(type) {
+  var tbId = 'inv'+type[0]+'b';
+  var tb = document.getElementById(tbId);
+  if (tb.querySelector('.ld')) tb.innerHTML = '';
+  var tr = document.createElement('tr');
+  tr.innerHTML = irHTML({}, type).replace(/^<tr>/,'').replace(/<\/tr>$/,'');
+  tb.appendChild(tr);
+}
+
+function getIK(type) {
+  if (type==='daily') return document.getElementById('ddt').value;
+  if (type==='weekly') return document.getElementById('wdt').value;
+  return document.getElementById('mdt').value;
+}
+
+function getIRows(type) {
+  var rows = [];
+  var tbId = 'inv'+type[0]+'b';
+  document.querySelectorAll('#'+tbId+' tr').forEach(function(tr) {
+    var sel = tr.querySelector('select'); if (!sel || !sel.value) return;
+    var sv = sel.value.split('|');
+    var nums = [].slice.call(tr.querySelectorAll('input[type="number"]'));
+    var obj = { name:sv[0], unit:sv[1]||'', opening:+nums[0].value||0, received:+nums[1].value||0 };
+    if (type==='daily') { obj.tout=+nums[2].value||0; obj.tin=+nums[3].value||0; obj.closing=+nums[4].value||0; }
+    else { obj.consumption=+nums[2].value||0; obj.closing=+nums[3].value||0; }
+    var txt = tr.querySelector('input[type="text"]'); obj.notes = txt ? txt.value : '';
+    rows.push(obj);
+  });
+  return rows;
+}
+
+async function loadInv(type) {
+  var dk = getIK(type); if (!dk) return;
+  var tbId = 'inv'+type[0]+'b';
+  var tb = document.getElementById(tbId);
+  tb.innerHTML = '<tr><td colspan="10" class="ld"><div class="sp"></div></td></tr>';
+  try {
+    var rows = await api('inventory?branch_id=eq.'+CU.id+'&type=eq.'+type+'&date=eq.'+dk+'&select=*');
+    if (rows.length && rows[0].data && rows[0].data.items && rows[0].data.items.length) {
+      tb.innerHTML = rows[0].data.items.map(function(item){ return irHTML(item, type); }).join('');
+    } else {
+      tb.innerHTML = '<tr><td colspan="10" class="ld">No records — click + Add Item</td></tr>';
+    }
+  } catch(e) { tb.innerHTML = '<tr><td colspan="10" style="color:var(--dg);padding:12px">Error: '+e.message+'</td></tr>'; }
+}
+
+async function saveInv(type) {
+  var dk = getIK(type); if (!dk) { alert('Select date first'); return; }
+  var items = getIRows(type); if (!items.length) { alert('Add items first'); return; }
+  try {
+    var ex = await api('inventory?branch_id=eq.'+CU.id+'&type=eq.'+type+'&date=eq.'+dk+'&select=id');
+    if (ex.length) await api('inventory?id=eq.'+ex[0].id,'PATCH',{data:{items:items}});
+    else await api('inventory','POST',{branch_id:CU.id,date:dk,type:type,data:{items:items}});
+    alert('Inventory saved!');
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+function expTbl(id, name) {
+  var rows = document.querySelectorAll('#'+id+' tr'); var csv = '';
+  rows.forEach(function(r){ var c=[].slice.call(r.querySelectorAll('td')); if(c.length) csv+=c.map(function(x){return x.textContent.trim();}).join('	')+'
+'; });
+  var a = document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/tsv'})); a.download=name+'_'+td()+'.tsv'; a.click();
+}
+
+function openRec() {
+  document.getElementById('nrprod').innerHTML = popts();
+  document.getElementById('nrqty').value = '';
+  document.getElementById('nrnote').value = '';
+  openM('mrec');
+}
+document.getElementById('mrec').addEventListener('click', function(e) {
+  if (e.target === this) closeM('mrec');
+});
+
+setInterval(function(){ if(CU&&!CU.isAdmin) chkLock(); }, 300000);
+</script>
+</body>
+</html>
